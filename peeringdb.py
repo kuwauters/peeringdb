@@ -86,10 +86,9 @@ def datacollection (api_url, authentication):
 def analyse_peer(peers):
     for el in peers:
         print('....looking for peers at same location as ix')
-        if el.region_continent == el.ix.region_continent:
-            print(el.name + ';' + el.asn + ';' + el.region_continent + ';' +el.presence_name)
-        else:
-            print("no match")
+
+        if len(el.region_continent) == 1:
+            print(el.name + ';' + str(el.asn) + ';' + str(el.region_continent) + ';' + str(el.presence_name))
 
 def create_output():
     '''
