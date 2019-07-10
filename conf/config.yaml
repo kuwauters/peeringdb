@@ -2,3 +2,4 @@
 base_url: "https://www.peeringdb.com/api/"
 ix: "ix"
 ixlan: "ixlan/"
+peer: "net/"
