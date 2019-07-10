@@ -8,3 +8,8 @@
 
 ## Output example
 
+id961407@dl0005 peeringdb]$ python peeringdb.py --lclix 2381
+
+Avanti Communications South Africa;328306;[u'Africa'];[u'WAF-IX, Lagos: Main', u'WAF-IX, Lagos: Main']
+Avanti Communications South Africa;328306;[u'Africa'];[u'WAF-IX, Lagos: Main', u'WAF-IX, Lagos: Main']
+Juniper Solutions;37398;[u'Africa'];[u'WAF-IX, Lagos: Main']
