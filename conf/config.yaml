@@ -3,3 +3,12 @@ base_url: "https://www.peeringdb.com/api/"
 ix: "ix"
 ixlan: "ixlan/"
 peer: "net/"
+attr:
+  - name
+  - asn
+  - as_set
+  - max_pfx
+  - max_pfx6
+  - policy
+  - presence_name
+  - region_continent

@@ -4,7 +4,7 @@ import yaml
 import os
 import pprint
 import tqdm
-
+from concurrent import futures
 
 class ix():
     def __init__(self):
@@ -80,15 +80,21 @@ def datacollection (api_url, authentication):
         execute get for the given url
     '''
     if authentication:
-        return requests.get(api_url, auth('id961407',getpass()))
+        return (requests.get(api_url, auth('id961407',getpass()))).json()
     else:
-        return requests.get(api_url)
+        return (requests.get(api_url)).json()
 
-def analyse_peer(peers):
+def analyse_peer(peers,attr_lst):
     print('...analysing..')
     for el in tqdm.tqdm(peers, total=len(peers)):
         if len(el.region_continent) == 1:
-            print(el.name + ';' + str(el.asn) + ';' + str(el.region_continent) + ';' + str(el.presence_name))
+            for attr in attr_lst:
+                
+                if isinstance(getattr(el,attr),list):
+                    print(' // '.join(getattr(el, attr)) + ';')                  
+                else:
+                    print(getattr(el, attr))
+                    
 
 def create_output():
     '''
@@ -125,11 +131,11 @@ def main():
         try:
             print('.looking up IX LANs')
             ix_obj = ix()
-            ix_obj.update_ix(ntw_rsp.json())
+            ix_obj.update_ix(ntw_rsp)
             for ixlan in ix_obj.lanset:
                 ixlan_rsp = datacollection('{}{}/{}'.format(cfg['base_url'], cfg['ixlan'],ixlan),False)
                 
-                for peer_el in ixlan_rsp.json()['data'][0]['net_set']:
+                for peer_el in ixlan_rsp['data'][0]['net_set']:
                     peer_obj = peer(ix_obj)
                     peer_obj.update_peer(peer_el)
                     peer_lst.append(peer_obj)
@@ -144,14 +150,20 @@ def main():
 
     for peer_el in tqdm.tqdm(peer_lst, total=len(peer_lst)):    
         presence_rsp = datacollection('{}{}/{}'.format(cfg['base_url'], cfg['peer'],peer_el.id),False)
-        peer_el.update_presence(presence_rsp.json())
+        peer_el.update_presence(presence_rsp)
 
         print('...looking up ix presence / regions')
-        for ix_el in tqdm.tqdm(peer_el.presence, total = len(peer_el.presence)):
-            ntw_rsp = datacollection('{}{}/{}'.format(cfg['base_url'], cfg['ix'],ix_el),False)
-            peer_el.update_region(ntw_rsp.json())
+        with futures.ThreadPoolExecutor(40) as executor:
+            rsp_lst = []
+            for ix_el in tqdm.tqdm(peer_el.presence, total = len(peer_el.presence)):
+                          
+                ntw_rsp = executor.submit(datacollection,('{}{}/{}'.format(cfg['base_url'], cfg['ix'],ix_el)),False)
+                rsp_lst.append(ntw_rsp)
+                
+            for el in rsp_lst:
+                peer_el.update_region(el.result())
 
-    analyse_peer(peer_lst)
+    analyse_peer(peer_lst, cfg['attr'])
     
 
 if __name__ == '__main__':
