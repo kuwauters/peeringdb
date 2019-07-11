@@ -4,6 +4,7 @@
 ## Options
 - obj: defines the data that you want to retrieve
     - ixpfx: retrieve the prefix ranges that are used on all IXs
+    - lclix `id`: retireve the peers that are only present in the same region as this ix. The `ìd` is the ix id that can be retrieved by searching the ix itself
 
 
 ## Output example

@@ -3,6 +3,7 @@ import argparse
 import yaml
 import os
 import pprint
+import tqdm
 
 
 class ix():
@@ -84,9 +85,8 @@ def datacollection (api_url, authentication):
         return requests.get(api_url)
 
 def analyse_peer(peers):
-    for el in peers:
-        print('....looking for peers at same location as ix')
-
+    print('...analysing..')
+    for el in tqdm.tqdm(peers, total=len(peers)):
         if len(el.region_continent) == 1:
             print(el.name + ';' + str(el.asn) + ';' + str(el.region_continent) + ';' + str(el.presence_name))
 
@@ -140,22 +140,19 @@ def main():
     else:
         print('search object not defined, try peeringdb.py -h')
 
-    for peer_el in peer_lst:
-        print('..Looking up peers')
+    print('..Looking up peers')
+
+    for peer_el in tqdm.tqdm(peer_lst, total=len(peer_lst)):    
         presence_rsp = datacollection('{}{}/{}'.format(cfg['base_url'], cfg['peer'],peer_el.id),False)
         peer_el.update_presence(presence_rsp.json())
 
         print('...looking up ix presence / regions')
-        for ix_el in peer_el.presence:
+        for ix_el in tqdm.tqdm(peer_el.presence, total = len(peer_el.presence)):
             ntw_rsp = datacollection('{}{}/{}'.format(cfg['base_url'], cfg['ix'],ix_el),False)
             peer_el.update_region(ntw_rsp.json())
 
     analyse_peer(peer_lst)
-    '''        
-    for el in peer_lst:
-        print (el.name)
-        print(el.presence)
-    '''
+    
 
 if __name__ == '__main__':
     main()
