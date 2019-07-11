@@ -172,8 +172,7 @@ def main():
                 cred = (search_obj.l,search_obj.p)
                 presence_rsp = datacollection('{}{}/{}'.format(cfg['base_url'], cfg['peer'],peer_el.id),True,cred)
                 peer_el.update_contact(presence_rsp,cfg['contact'])
-                print('AFTER')
-                print(peer_el.technical)
+
             else:
                 presence_rsp = datacollection('{}{}/{}'.format(cfg['base_url'], cfg['peer'],peer_el.id),False,cred)
 
