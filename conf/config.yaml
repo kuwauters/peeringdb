@@ -6,9 +6,17 @@ peer: "net/"
 attr:
   - name
   - asn
+  - ip
+  - ip6
   - as_set
   - max_pfx
   - max_pfx6
   - policy
+  - technical
+  - noc
   - presence_name
   - region_continent
+contact:
+  - technical
+  - noc
+  - policy
