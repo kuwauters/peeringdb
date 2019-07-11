@@ -104,14 +104,16 @@ def datacollection (api_url, authentication,cred):
 
 def analyse_peer(peers,attr_lst):
     print('...analysing..')
-    print(';'.join(attr_lst))
     for el in tqdm.tqdm(peers, total=len(peers)):
         if len(el.region_continent) == 1:
             for attr in attr_lst:
                 if isinstance(getattr(el,attr),list):
-                    print(' // '.join(getattr(el, attr)), end=';')                  
+                    try:
+                        print(' // '.join(getattr(el, attr)), end=';')                  
+                    except Exception as e:
+                        print(e)
                 else:
-                    print(getattr(el, attr),end = ';')
+                    print('NA')
             print()
                     
 
